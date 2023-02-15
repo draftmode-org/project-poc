@@ -1,0 +1,35 @@
+{
+  "name": "example",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "generate": "vite-ssg build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "element-plus": "^2.2.29",
+    "lodash.clonedeep": "^4.5.0",
+    "mande": "^2.0.3",
+    "pinia": "^2.0.30",
+    "simple-syntax-highlighter": "^2.2.5",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.5",
+    "xml-formatter": "^3.2.0"
+  },
+  "devDependencies": {
+    "@iconify-json/ep": "^1.1.8",
+    "@types/node": "^18.11.19",
+    "@vitejs/plugin-vue": "^3.1.0",
+    "saas": "^1.0.0",
+    "typescript": "^4.9.5",
+    "unocss": "^0.49.4",
+    "unplugin-vue-components": "^0.22.12",
+    "vite": "^3.1.4",
+    "vite-ssg": "^0.21.1",
+    "vue-tsc": "^1.0.24"
+  },
+  "license": "MIT"
+}

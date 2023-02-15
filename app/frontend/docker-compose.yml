@@ -1,0 +1,17 @@
+version: "3.4"
+
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_IMAGE_NAME: node
+        NODE_IMAGE_TAG: 1.0.0
+        NGINX_IMAGE_NAME: nginx
+        NGINX_IMAGE_TAG: 1.0.0
+        NGINX_DIR: /var/www/html
+      target: production
+    expose:
+      - 5173

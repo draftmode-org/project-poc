@@ -1,0 +1,34 @@
+// https://github.com/element-plus/element-plus/blob/dev/packages/theme-chalk/src/common/var.scss
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  // do not use same name, it will override.
+  $colors: (
+    "primary": (
+      "base": #f2711c,
+    ),
+    "success": (
+      "base": #239c1f,
+    ),
+    "warning": (
+      "base": #f2711c,
+    ),
+    "danger": (
+      "base": #db2828,
+    ),
+    "error": (
+      "base": #db2828,
+    ),
+    "info": (
+      "base": #42b8dd,
+    ),
+  ),
+  $button: (
+    "font-weight": 500
+  ),
+  $header: (
+    height: auto,
+    padding: 0 20px 16px 20px
+  ),
+);
+
+// if you want to import all
+// @use "element-plus/theme-chalk/src/index.scss" as *;

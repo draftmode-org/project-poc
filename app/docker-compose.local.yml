@@ -1,0 +1,38 @@
+version: "3.4"
+
+services:
+  webserver:
+    build:
+      context: ./webserver
+      target: local
+
+  backend:
+    build:
+      context: ./backend
+      args:
+        IMAGE_NAME: php-local
+        IMAGE_TAG: 1.0.0
+      target: local
+    volumes:
+      # target /var/www has to be identically to <root> inside /webserver/.deploy/nginx/sites/api.php.conf
+      - ./backend:/var/www
+    # image is alpine base: command => sh -c
+    # - composer install (requires composer.json)
+    command: sh -c "composer install"
+
+  frontend:
+    build:
+      context: ./frontend
+      target: local
+    volumes:
+      - ./frontend:/var/www/html
+    # npm install has issues creating symlinks to mounted folders
+    # to prevent this: mount node_modules back to container
+      - /var/www/html/node_modules/
+    # image is alpine base: command => sh -c
+    # - npm install (requires package.json)
+    # - npm run dev
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - target: 5173
+        published: 5173

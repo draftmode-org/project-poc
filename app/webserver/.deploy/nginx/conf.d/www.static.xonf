@@ -1,0 +1,17 @@
+    server {
+        listen 80;
+        listen 443;
+
+        server_name www.dev.webfux.io;
+
+        error_log  /var/log/nginx/www.error.log;
+        access_log /var/log/nginx/www.access.log;
+
+        root /var/www/html;
+
+        include /etc/nginx/location/assets.conf;
+        include /etc/nginx/location/assets-doc.conf;
+        include /etc/nginx/location/assets-media.conf;
+        include /etc/nginx/location/assets-video.conf;
+        include /etc/nginx/location/assets-html.conf;
+    }

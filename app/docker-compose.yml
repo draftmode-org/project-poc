@@ -1,0 +1,45 @@
+version: "3.4"
+
+services:
+  webserver:
+    container_name: webserver
+    build:
+      context: ./webserver
+      args:
+        IMAGE_NAME: nginx-production
+        IMAGE_TAG: 1.0.0
+      target: production
+    ports:
+      - target: 80
+        published: 80
+    depends_on:
+      - php
+      - frontend
+
+  # service name has to be identically to nginx directive for proxy
+  php:
+    container_name: php
+    build:
+      context: ./backend
+      args:
+        IMAGE_NAME: php-production
+        IMAGE_TAG: 1.0.0
+        EXPOSE_PORT: 9000
+      target: production
+    expose:
+      - 9000
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_IMAGE_NAME: node-production
+        NODE_IMAGE_TAG: 1.0.0
+        NGINX_IMAGE_NAME: nginx-production
+        NGINX_IMAGE_TAG: 1.0.0
+        NGINX_DIR: /var/www/html
+      target: production
+    expose:
+      - 5173
