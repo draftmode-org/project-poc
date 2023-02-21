@@ -1,0 +1,10 @@
+ARG IMAGE_NAME
+ARG IMAGE_TAG
+
+FROM ${IMAGE_NAME}:${IMAGE_TAG}-xdebug
+
+# has to be identically to nginx directive
+WORKDIR /var/app
+
+ENV APP_ENV=dev XDEBUG_MODE=off
+

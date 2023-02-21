@@ -1,0 +1,18 @@
+api_platform:
+    title: Webfux POC for API-Platform
+    version: 1.0.0
+    # Mercure integration, remove if unwanted
+    # mercure: ~
+    swagger:
+        versions: [3]
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/ApiResource'
+            - '%kernel.project_dir%/src/Entity'
+    # Good cache defaults for REST APIs
+    defaults:
+        normalization_context:
+            skip_null_values: true
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
