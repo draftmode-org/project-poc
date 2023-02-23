@@ -5,15 +5,17 @@ BASH_CMD="sh -c"
 
 function exit_help() {
     if [[ -n ${1} ]];then
-      echo "$(tput setaf 1)[$(date)]<E> ${1}$(tput sgr 0)"
+      echo "$(tput setaf 1)[$(date)] ${1}$(tput sgr 0)"
       echo
     fi
     echo "Usage: npm.sh <command> [...options]"
     echo
     echo "command:"
-    echo "   command                              all npm provided commands"
+    echo "   all given commands are forward 1:1, there is no limitation/verification"
+    echo
     echo "options:"
-    echo "                                        all options supported by npm commands"
+    echo "   all given options are forward 1:1, there is no limitation/verification"
+    echo
     echo "additional options:"
     echo "   --container (CONTAINER)              use another container (default: ${CONTAINER})"
     echo "   --preview                            just build the command(s) to be executed and print it"
@@ -58,11 +60,13 @@ done
 
 start=(date +%s)
 EXECUTE="${COMMAND} ${OPTIONS[*]}"
-echo "[$(date)]<I> start execute command: docker exec -it ${CONTAINER} ${BASH_CMD} npm ${EXECUTE}"
+
+echo
+echo "[$(date)] start execute command: docker exec -it ${CONTAINER} ${BASH_CMD} npm ${EXECUTE}"
 if [[ -z ${PREVIEW} ]]; then
   (docker exec -it ${CONTAINER} ${BASH_CMD} "npm ${EXECUTE}")
 fi
 end=(date +%s)
 runtime=$((end-start))
-echo "[$(date)]<I> end execute command: (runtime: ${runtime} sec)"
+echo "[$(date)] end execute command: (runtime: ${runtime} sec)"
 echo

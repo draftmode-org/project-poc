@@ -5,7 +5,7 @@ BASH_CMD="sh -c"
 
 function exit_help() {
     if [[ -n ${1} ]];then
-      echo "$(tput setaf 1)[$(date)]<E> ${1}$(tput sgr 0)"
+      echo "$(tput setaf 1)[$(date)] ${1}$(tput sgr 0)"
       echo
     fi
     echo "Usage: php-composer.sh <command> [...options]"
@@ -36,7 +36,7 @@ do
       (( y++))
       ARGUMENT=${ARGUMENTS[$y]}
       if [[ -z ${ARGUMENT} ]];then
-        exit_help "<E><container-name> missing"
+        exit_help "<container-name> missing"
       fi
       CONTAINER=${ARGUMENT}
     ;;
@@ -50,7 +50,7 @@ do
       (( y++))
       PACKAGE_NAME=${ARGUMENTS[$y]}
       if [[ -z ${PACKAGE_NAME} ]];then
-        exit_help "<E><package-name> missing"
+        exit_help "<package-name> missing"
       fi
       CMD="COMPOSER_DISCARD_CHANGES=true composer update ${PACKAGE_NAME} --no-interaction"
     ;;
@@ -58,12 +58,12 @@ do
       (( y++))
       PACKAGE_NAME=${ARGUMENTS[$y]}
       if [[ -z ${PACKAGE_NAME} ]];then
-        exit_help "<E><package-name> for command require missing"
+        exit_help "<package-name> for command require missing"
       fi
       (( y++))
       VERSION=${ARGUMENTS[$y]}
       if [[ -z ${VERSION} ]];then
-        exit_help "<E><version> for for command require ${PACKAGE_NAME} missing"
+        exit_help "<version> for for command require ${PACKAGE_NAME} missing"
       fi
       CMD="composer require ${PACKAGE_NAME}:${VERSION}"
     ;;
@@ -71,7 +71,7 @@ do
       (( y++))
       PACKAGE_NAME=${ARGUMENTS[$y]}
       if [[ -z ${PACKAGE_NAME} ]];then
-        exit_help "<E><package-name> for command require missing"
+        exit_help "<package-name> for command require missing"
       fi
       (( y++))
       VERSION=${ARGUMENTS[$y]}
@@ -85,7 +85,7 @@ do
       (( y++))
       PACKAGE_NAME=${ARGUMENTS[$y]}
       if [[ -z ${PACKAGE_NAME} ]];then
-        exit_help "<E><package-name> for command remove missing"
+        exit_help "<package-name> for command remove missing"
       fi
       CMD="composer remove ${PACKAGE_NAME}"
     ;;
@@ -93,21 +93,22 @@ do
       exit_help
     ;;
     *)
-      exit_help "options <${ARGUMENT}> not supported"
+      exit_help "option ${ARGUMENT} not supported"
     ;;
   esac
   (( y++))
 done
 if [[ -z ${CMD} ]];then
-  exit_help "<E><command> missing"
+  exit_help "<command> missing"
 fi
 
-echo "[$(date)]<I> start execute command: docker exec -it ${CONTAINER} ${BASH_CMD} ${CMD}"
+echo
+echo "[$(date)] start execute command: docker exec -it ${CONTAINER} ${BASH_CMD} ${CMD}"
 start=(date +%s)
 if [[ -z ${PREVIEW} ]]; then
   (docker exec -it ${CONTAINER} ${BASH_CMD} "${CMD}")
 fi
 end=(date +%s)
 runtime=$((end-start))
-echo "[$(date)]<I> end execute command: (runtime: ${runtime} sec)"
+echo "[$(date)] end execute command: (runtime: ${runtime} sec)"
 echo
