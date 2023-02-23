@@ -20,6 +20,7 @@ function exit_help() {
     echo "additional options:"
     echo "   --container (CONTAINER)              use another container (default: ${CONTAINER})"
     echo "   --preview                            just build the command(s) to be executed and print it"
+    echo "   --help"
     echo
     if [[ -n ${1} ]];then
       exit 1

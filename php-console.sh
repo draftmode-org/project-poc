@@ -8,23 +8,15 @@ function exit_help() {
       echo "$(tput setaf 1)[$(date)] ${1}$(tput sgr 0)"
       echo
     fi
-    echo "Usage: php-composer.sh <command> [...options]"
+    echo "Usage: php-composer.sh [...commands]"
     echo
-    echo "command:"
-    echo "   make:migration"
-    echo "   make:entity"
-    echo "   make:controller"
-    echo "   make:migration:diff"
-    echo "   cache:clear"
-    echo "   doctrine:database:create"
-    echo "   doctrine:schema:update"
+    echo "commands:"
+    echo "   all given commands are forward 1:1, there is no limitation/verification"
     echo
-    echo "options:"
-    echo "   all given options are forward 1:1, there is no limitation/verification"
-    echo
-    echo "additional options:"
+    echo "additional commands:"
     echo "   --container (CONTAINER)              use another container (default: ${CONTAINER})"
     echo "   --preview                            just build the command(s) to be executed and print it"
+    echo "   --examples                           show examples"
     echo
     echo "blocked commands:"
     echo "   migration:migrate"
@@ -53,39 +45,32 @@ do
     --preview)
       PREVIEW=1
     ;;
-    make:migration|make:entity|make:controller|make:migration:diff)
-      CMD=${ARGUMENT}
+    --examples)
+      echo
+      echo "examples:"
+      echo "   make:entity --api-resource           create entity and provide it with CURD as an API resource"
+      echo "   doctrine:migrations:diff             generates the migration comparing the db and your current entities"
+      echo "   doctrine:schema:drop --force         drop the complete database schema"
+      echo
+      exit
     ;;
-    doctrine:database:create|doctrine:schema:update)
-      CMD=${ARGUMENT}
-    ;;
-    cache:clear)
-      CMD=${ARGUMENT}
-    ;;
-    migration:migrate|doctrine:migrations:migrate)
+    migration:migrate|xdoctrine:migrations:migrate)
       exit_help "to run ${ARGUMENT}, use docker compose up"
     ;;
-    --help)
-      exit_help
-    ;;
     *)
-      OPTIONS+=(" ${ARGUMENT}")
+      OPTIONS+=("${ARGUMENT}")
     ;;
   esac
   (( y++))
 done
 
-if [[ -z ${CMD} ]];then
-  exit_help "supported <command> missing"
-fi
-CMD="php bin/console ${CMD} ${OPTIONS[*]}"
+CMD="php bin/console ${OPTIONS[*]}"
 
 echo
 echo "[$(date)] start execute command: docker exec -it ${CONTAINER} ${BASH_CMD} ${CMD}"
 start=(date +%s)
 if [[ -z ${PREVIEW} ]]; then
-#  (docker exec -it ${CONTAINER} ${BASH_CMD} "${CMD}")
-   echo "run"
+  (docker exec -it ${CONTAINER} ${BASH_CMD} "${CMD}")
 fi
 end=(date +%s)
 runtime=$((end-start))
