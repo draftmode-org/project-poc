@@ -12,9 +12,12 @@ function exit_help() {
     echo
     echo "command:"
     echo "   make:migration"
-    echo "   doctrine:database:create"
     echo "   make:entity"
     echo "   make:controller"
+    echo "   make:migration:diff"
+    echo "   cache:clear"
+    echo "   doctrine:database:create"
+    echo "   doctrine:schema:update"
     echo
     echo "options:"
     echo "   all given options are forward 1:1, there is no limitation/verification"
@@ -50,7 +53,13 @@ do
     --preview)
       PREVIEW=1
     ;;
-    make:migration|doctrine:database:create|make:entity|make:controller)
+    make:migration|make:entity|make:controller|make:migration:diff)
+      CMD=${ARGUMENT}
+    ;;
+    doctrine:database:create|doctrine:schema:update)
+      CMD=${ARGUMENT}
+    ;;
+    cache:clear)
       CMD=${ARGUMENT}
     ;;
     migration:migrate|doctrine:migrations:migrate)
