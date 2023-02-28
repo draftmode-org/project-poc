@@ -6,14 +6,39 @@
 
     server {
         listen 80;
+        listen [::]:80;
         listen 443;
+        listen [::]:443;
 
-        server_name ~^www.(?<domain>.+)$;
+        server_name ${SUB_DOMAIN_FRONTEND}.${APP_DOMAIN};
+
+        ssl_certificate /etc/ssl/certs/${APP_DOMAIN}.crt;
+        ssl_certificate_key /etc/ssl/private/${APP_DOMAIN}.key;
+
+        ssl_protocols TLSv1.3;
+        ssl_prefer_server_ciphers on;
+#        ssl_dhparam /etc/nginx/dhparam.pem;
+        ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
+        ssl_ecdh_curve secp384r1;
+        ssl_session_timeout  10m;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_tickets off;
+#        ssl_stapling on;
+#        ssl_stapling_verify on;
+#        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 5s;
+        # Disable strict transport security for now. You can uncomment the following
+        # line if you understand the implications.
+        #add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+        add_header X-Frame-Options DENY;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
 
         location /login {
             root /var/html/webserver;
             try_files $uri $uri/ /login.html;
         }
+
         location / {
         # a resovler definition is needed!
         # because we use Docker, we have to use the internal Docker DNS resolver IP which is 127.0.0.11.
@@ -30,10 +55,15 @@
 
     server {
         listen 80;
+        listen [::]:80;
         listen 443;
+        listen [::]:443;
 
-        server_name ~^api.(?<domain>.+)$;
-        
+        server_name ${SUB_DOMAIN_BACKEND}.${APP_DOMAIN};
+
+        ssl_certificate /etc/ssl/certs/${APP_DOMAIN}.crt;
+        ssl_certificate_key /etc/ssl/private/${APP_DOMAIN}.key;
+
         ###############################################################
         # serve static files (images,js) directly
         location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|txt|md|doc|pdf|ico)$ {
@@ -59,16 +89,16 @@
         location ~ ^/index\.php(/|$) {
             # cross origin section
             set $cors "";
-            if ($http_origin ~* (.*\.webfux.io)) {
+            if ($http_origin ~* (.*\.${APP_DOMAIN})) {
                 set $cors "true";
             }
             if ($cors = "true") {
-              # add_header "Access-Control-Allow-Origin" "http://www.dev.webfux.io"  *;
               add_header 'Access-Control-Allow-Origin' "$http_origin";
               add_header 'Access-Control-Allow-Credentials' 'true';
             }
+
             root /var/app/public;
-            
+
             fastcgi_split_path_info ^(.+\.php)(/.*)$;
             resolver 127.0.0.11 ipv6=off;
 
