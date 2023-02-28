@@ -51,6 +51,7 @@ services:
       - ./api/.deploy/php/docker-healthcheck.sh:/usr/local/bin/docker-healthcheck.sh
       # mounted folder has to be identically to nginx directive AND workdir in Dockerfile
       - ./api:/var/app
+      - ./api/vendor:/var/app/vendor
       # prevent mounting folders outside docker
       - /var/app/vendor
       - /var/app/var

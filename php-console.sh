@@ -52,6 +52,13 @@ do
       echo "   doctrine:migrations:diff             generates the migration comparing the db and your current entities"
       echo "   doctrine:schema:drop --force         drop the complete database schema"
       echo
+      echo "...user"
+# already installed, I guess
+#      echo "   ./php-composer require symfony/security-bundle ^6.2"
+      echo "   ./php-console make:user"
+      echo "   ./php-composer require symfonycasts/verify-email-bundle"
+      echo "   ./php-composer require form"
+      echo
       exit
     ;;
     migration:migrate|xdoctrine:migrations:migrate)

@@ -10,8 +10,15 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
 
 	if [ "$APP_ENV" != 'prod' ]; then
+	  # install composer packages
     echo "Installing composer dependencies..."
 		composer install --prefer-dist --no-progress --no-interaction
+
+    # install private/public jwt tokens
+		echo "Making sure public / private keys for JWT exists..."
+		php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction
+    setfacl -R -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
+    setfacl -dR -m u:www-data:rX -m u:"$(whoami)":rwX config/jwt
 	fi
 
 	if grep -q DATABASE_URL= .env; then

@@ -10,6 +10,10 @@ api_platform:
         query_parameter_validation: true
     swagger:
         versions: [3]
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header
     mapping:
         paths:
             - '%kernel.project_dir%/src/ApiResource'
