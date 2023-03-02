@@ -31,6 +31,9 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
+  # TODO (2023.03.02, switch from ip:port => socket)
+  # TODO (2023.03.02, try to use API recommanded fpm,.. config)
+  # TODO (2023.03.02, performance issue, verify with anton)
   php:
     container_name: php
     build:
@@ -43,10 +46,10 @@ services:
       - database
     environment:
       # given arguments overwrite configuration in api/.env
-      # can also be set in api/.env
       TRUSTED_HOSTS: localhost|api.dev.webfux.io|www.dev.webfux.io
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}?serverVersion=${MYSQL_VERSION}
     volumes:
+      # => COPY command to Dockerfile::baseImage
       - ./api/.deploy/php/docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
       - ./api/.deploy/php/docker-healthcheck.sh:/usr/local/bin/docker-healthcheck.sh
       # mounted folder has to be identically to nginx directive AND workdir in Dockerfile
@@ -85,16 +88,20 @@ services:
         published: 443
     environment:
       - APP_DOMAIN=webfux.io
+      - SSL_HANDLER=openssl
       - SUB_DOMAIN_FRONTEND=www.dev
       - SUB_DOMAIN_BACKEND=api.dev
     volumes:
-# config + certs
+      # => COPY command to Dockerfile::baseImage
+      - ./webserver/.deploy/nginx/docker-entrypoint.d/99-certificates.sh:/docker-entrypoint.d/99-certificates.sh:ro
+      # => COPY command in Dockerfile
       - ./webserver/.deploy/nginx/templates:/etc/nginx/templates/:ro
-      - ./webserver/.deploy/nginx/certs/webfux.io.crt:/etc/ssl/certs/webfux.io.crt
-      - ./webserver/.deploy/nginx/certs/webfux.io.key:/etc/ssl/private/webfux.io.key
-# data
-      - ./webserver/public:/var/html/webserver:ro
+      # data (login page)
+      - ./webserver/public:/var/html/webserver
+      # data (api public assets, I guess only local needed)
       - ./api/public:/var/html/api:ro
+      # (2023.03.02 - still required, but no idea, right now why)
+      # TODO (2023.03.02 - verify console log with frontend team, get rid of errors)
       - ./frontend:/var/html/frontend:ro
 
   database:
