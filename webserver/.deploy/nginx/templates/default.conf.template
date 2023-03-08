@@ -35,6 +35,9 @@
         }
     }
 
+    upstream _php {
+        server unix:/var/run/php/php-fpm.sock;
+    }
     #
     # backend port 443
     #
@@ -79,7 +82,6 @@
             root /var/app/public;
 
             fastcgi_split_path_info ^(.+\.php)(/.*)$;
-            resolver 127.0.0.11 ipv6=off;
 
             # Mitigate https://httpoxy.org/ vulnerabilities
             fastcgi_param HTTP_PROXY "";
@@ -89,7 +91,17 @@
             fastcgi_buffers 8 16k;
 
             fastcgi_index index.php;
-            fastcgi_pass php:9000;
+            ###############################################################
+            # PHP-FPM is configured to listen on a TCP/IP socket
+            # [www] listen = "0.0.0.0:9000"
+            # resolver 127.0.0.11 ipv6=off;
+            # fastcgi_pass php:9000;
+            ###############################################################
+            # PHP-FPM is configured to listen on a UNIX domain socket
+            # [www] listen = ".../php-fpm.sock"
+            # resolver 127.0.0.11 ipv6=off;
+            fastcgi_pass _php;
+
             include fastcgi_params;
 
             # When you are using symlinks to link the document root to the
